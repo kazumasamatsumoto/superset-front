@@ -12,6 +12,7 @@ export class App implements AfterViewInit, OnDestroy {
   
   private intervalId: any;
   private currentUser = 'admin';
+  private dashboardId = "feb0dbd1-779b-4f82-9662-968cceba7505"
 
   ngAfterViewInit() {
     const userSelect = document.getElementById('user-select') as HTMLSelectElement;
@@ -70,7 +71,7 @@ export class App implements AfterViewInit, OnDestroy {
       console.log(`Loading dashboard for user: ${this.currentUser}`);
 
       await embedDashboard({
-        id: 'feb0dbd1-779b-4f82-9662-968cceba7505',
+        id: this.dashboardId,
         supersetDomain: 'http://localhost:8088',
         mountPoint: container,
         fetchGuestToken: () => this.fetchGuestToken(this.currentUser),
@@ -119,7 +120,7 @@ export class App implements AfterViewInit, OnDestroy {
         'x-user-id': username,
       },
       body: JSON.stringify({ 
-        dashboardId: 'feb0dbd1-779b-4f82-9662-968cceba7505',
+        dashboardId: this.dashboardId,
         username: username,
       }),
     });
