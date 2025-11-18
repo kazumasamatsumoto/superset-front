@@ -18,21 +18,66 @@ export class App implements AfterViewInit, OnDestroy {
     const userSelect = document.getElementById('user-select') as HTMLSelectElement;
     const reloadBtn = document.getElementById('reload-btn') as HTMLButtonElement;
     const userNameSpan = document.getElementById('user-name');
-    
+    const rlsInfoSpan = document.getElementById('rls-info');
+
     reloadBtn?.addEventListener('click', () => {
       const selectedUser = userSelect?.value || 'admin';
       this.currentUser = selectedUser;
-      
+
       if (userNameSpan) {
         userNameSpan.textContent = selectedUser;
       }
-      
+
+      if (rlsInfoSpan) {
+        rlsInfoSpan.textContent = this.getRLSDescription(selectedUser);
+      }
+
       this.reloadDashboard();
     });
-  
+
     setTimeout(() => {
       this.loadDashboard();
     }, 100);
+  }
+
+  private getRLSDescription(username: string): string {
+    const rlsMapping: Record<string, string> = {
+      // Single conditions
+      'john_usa': "country = 'USA'",
+      'marie_france': "country = 'France'",
+      'yuki_japan': "country = 'Japan'",
+      'hans_germany': "country = 'Germany'",
+      'sophia_spain': "country = 'Spain'",
+      'manager_apac': "territory = 'APAC'",
+      'manager_emea': "territory = 'EMEA'",
+      'manager_japan': "territory = 'Japan'",
+      'motorcycles_sales': "product_line = 'Motorcycles'",
+      'classic_cars_sales': "product_line = 'Classic Cars'",
+      'vintage_cars_sales': "product_line = 'Vintage Cars'",
+      'trucks_buses_sales': "product_line = 'Trucks and Buses'",
+      'planes_sales': "product_line = 'Planes'",
+      'ships_sales': "product_line = 'Ships'",
+      'trains_sales': "product_line = 'Trains'",
+      'large_deals': "deal_size = 'Large'",
+      'medium_deals': "deal_size = 'Medium'",
+      'small_deals': "deal_size = 'Small'",
+
+      // Multiple conditions (AND)
+      'japan_motorcycles': "country = 'Japan' AND product_line = 'Motorcycles'",
+      'usa_large': "country = 'USA' AND deal_size = 'Large'",
+      'emea_classic_cars': "territory = 'EMEA' AND product_line = 'Classic Cars'",
+      'france_large': "country = 'France' AND deal_size = 'Large'",
+
+      // Multiple conditions (OR)
+      'small_medium': "deal_size IN ('Small', 'Medium')",
+      'vehicles_only': "product_line IN ('Motorcycles', 'Classic Cars', 'Vintage Cars', 'Trucks and Buses')",
+      'transport_only': "product_line IN ('Planes', 'Ships', 'Trains')",
+
+      // Admin
+      'admin': 'No filters (All data)',
+    };
+
+    return rlsMapping[username] || 'Unknown user';
   }
 
   ngOnDestroy() {
