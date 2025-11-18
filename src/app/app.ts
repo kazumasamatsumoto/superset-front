@@ -12,7 +12,7 @@ export class App implements AfterViewInit, OnDestroy {
   
   private intervalId: any;
   private currentUser = 'admin';
-  private dashboardId = "feb0dbd1-779b-4f82-9662-968cceba7505"
+  private dashboardId = "078c015e-3464-46a3-b75b-0caefddafb6a"
 
   ngAfterViewInit() {
     const userSelect = document.getElementById('user-select') as HTMLSelectElement;
@@ -111,26 +111,26 @@ export class App implements AfterViewInit, OnDestroy {
   }
 
   private async fetchGuestToken(username: string): Promise<string> {
-    console.log(`Fetching guest token for: ${username}`);
-    
+    console.log('🔑 fetchGuestToken called for:', username);
+
     const response = await fetch('http://localhost:3000/api/superset/guest-token', {
       method: 'POST',
-      headers: { 
+      headers: {
         'Content-Type': 'application/json',
         'x-user-id': username,
       },
-      body: JSON.stringify({ 
+      body: JSON.stringify({
         dashboardId: this.dashboardId,
         username: username,
       }),
     });
-    
+
     if (!response.ok) {
       throw new Error(`Failed to fetch guest token: ${response.status}`);
     }
-    
+
     const data = await response.json();
-    console.log('Guest token received');
+    console.log('✅ Guest token received:', data.token.substring(0, 50) + '...');
     return data.token;
   }
 }
