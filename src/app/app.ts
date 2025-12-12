@@ -12,7 +12,7 @@ export class App implements AfterViewInit, OnDestroy {
   
   private intervalId: any;
   private currentUser = 'admin';
-  private dashboardId = "078c015e-3464-46a3-b75b-0caefddafb6a"
+  private dashboardId = "f261c2da-9a1c-46f4-af4a-3b79a04cb859"
 
   ngAfterViewInit() {
     const userSelect = document.getElementById('user-select') as HTMLSelectElement;
@@ -158,24 +158,31 @@ export class App implements AfterViewInit, OnDestroy {
   private async fetchGuestToken(username: string): Promise<string> {
     console.log('🔑 fetchGuestToken called for:', username);
 
-    const response = await fetch('http://localhost:3000/api/superset/guest-token', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-user-id': username,
-      },
-      body: JSON.stringify({
-        dashboardId: this.dashboardId,
-        username: username,
-      }),
-    });
+    try {
+      // Get guest token directly
+      console.log('📡 Getting guest token...');
+      const guestTokenResponse = await fetch('http://localhost:3000/api/superset/guest-token', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-user-id': username,
+        },
+        body: JSON.stringify({
+          dashboardId: this.dashboardId,
+          username: username,
+        }),
+      });
 
-    if (!response.ok) {
-      throw new Error(`Failed to fetch guest token: ${response.status}`);
+      if (!guestTokenResponse.ok) {
+        throw new Error(`Failed to fetch guest token: ${guestTokenResponse.status}`);
+      }
+
+      const guestTokenData = await guestTokenResponse.json();
+      console.log('✅ Guest token received:', guestTokenData.token.substring(0, 50) + '...');
+      return guestTokenData.token;
+    } catch (error) {
+      console.error('❌ Error fetching guest token:', error);
+      throw error;
     }
-
-    const data = await response.json();
-    console.log('✅ Guest token received:', data.token.substring(0, 50) + '...');
-    return data.token;
   }
 }
